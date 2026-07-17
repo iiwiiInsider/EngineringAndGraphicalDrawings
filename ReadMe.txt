@@ -1,8 +1,8 @@
 This repository serves two purposes:
 
-Store and track my drawings as I progress through the coursework @ https://www.udemy.com/course/autodesk-autocad-beginner-to-an-advanced-level/
+Store my drawings as I progress through the coursework @ https://www.udemy.com/course/autodesk-autocad-beginner-to-an-advanced-level/
 
-Develop a webpage (using HTML5, CSS3, and optional JavaScript) that automatically displays the drawings in a visually appealing format
+Develop a webpage HTML that automatically displays the drawings in a visually appealing format
 
 🖼️ Drawings
 All drawings are stored in the /drawings folder.
