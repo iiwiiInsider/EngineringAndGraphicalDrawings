@@ -77,18 +77,30 @@
 		}
 
 		.drawing-area {
-			border: 2px dashed var(--line);
+			border: 2px solid var(--line);
 			background: #fffaf2;
 			border-radius: 10px;
+			overflow: hidden;
+			margin-bottom: 14px;
+			position: relative;
+		}
+
+		.drawing-area iframe {
+			width: 100%;
+			height: 480px;
+			border: none;
+			display: block;
+		}
+
+		.drawing-area .placeholder {
 			min-height: 260px;
 			display: grid;
 			place-items: center;
 			text-align: center;
 			padding: 20px;
-			margin-bottom: 14px;
 		}
 
-		.drawing-area p {
+		.drawing-area .placeholder p {
 			color: var(--muted);
 			max-width: 48ch;
 		}
@@ -199,30 +211,29 @@
 <body>
 	<main class="wrap">
 		<h1>Drawings done in AutoCAD to become a advanced AutoCAD user.</h1>
-		<p class="subtitle">Browse every DWG file in this project. Select from the list or use Previous/Next.</p>
+		<p class="subtitle">Browse every drawing in this project. Select from the list or use Previous/Next to navigate.</p>
 
 		<section class="layout panel">
 			<div class="viewer">
 				<p class="file-label" id="currentFile">Select a drawing</p>
 
-				<div class="drawing-area">
-					<p>
-						Most browsers cannot directly render .dwg files. Use Open DWG to view in your CAD software,
-						or download it to inspect locally.
-					</p>
+				<div class="drawing-area" id="drawingArea">
+					<div class="placeholder" id="placeholder">
+						<p>Select a drawing from the list to preview it here.</p>
+					</div>
 				</div>
 
 				<div class="actions">
 					<button class="secondary" id="prevBtn" type="button">Previous</button>
 					<button class="secondary" id="nextBtn" type="button">Next</button>
-					<a class="open-link" id="openLink" href="#" target="_blank" rel="noopener">Open DWG</a>
+					<a class="open-link" id="openLink" href="#" target="_blank" rel="noopener">Open PDF</a>
 				</div>
 
 				<p class="count" id="countText">0 drawings</p>
 			</div>
 
 			<div class="list">
-				<h2>DWG Files</h2>
+				<h2>PDF Files</h2>
 				<div id="dwgList"></div>
 			</div>
 		</section>
@@ -230,25 +241,25 @@
 
 	<script>
 		const drawings = [
-			"Practical01.dwg",
-			"Practical02.dwg",
-			"Practical03.dwg",
-			"Practical04.dwg",
-			"Practical05.dwg",
-			"Practical06.dwg",
-			"Practical07.dwg",
-			"Practical08.dwg",
-			"Practical09.dwg",
-			"Practical10.dwg",
-			"Practical11.dwg",
-			"Practical12&13.dwg",
-			"Practice_Exercise01.dwg",
-			"Practice_Exercise02.dwg",
-			"Practice_Exercise03.dwg",
-			"Practice_Exercise04.dwg",
-			"Practice_Exercise05.dwg",
-			"Practice_Exercise06.dwg",
-			"Practice_Exercise07.dwg"
+			"Practical01.pdf",
+			"Practical02.pdf",
+			"Practical03.pdf",
+			"Practical04.pdf",
+			"Practical05.pdf",
+			"Practical06.pdf",
+			"Practical07.pdf",
+			"Practical08.pdf",
+			"Practical09.pdf",
+			"Practical10.pdf",
+			"Practical11.pdf",
+			"Practical12&13.pdf",
+			"Practice_Exercise01.pdf",
+			"Practice_Exercise02.pdf",
+			"Practice_Exercise03.pdf",
+			"Practice_Exercise04.pdf",
+			"Practice_Exercise05.pdf",
+			"Practice_Exercise06.pdf",
+			"Practice_Exercise07.pdf"
 		];
 
 		const currentFile = document.getElementById("currentFile");
@@ -260,8 +271,11 @@
 
 		let currentIndex = drawings.length > 0 ? 0 : -1;
 
+		const drawingArea = document.getElementById("drawingArea");
+		const placeholder = document.getElementById("placeholder");
+
 		function linkFor(fileName) {
-			return `Drawings/${encodeURIComponent(fileName).replace(/%2F/g, "/")}`;
+			return `Drawings/PDFs/${encodeURIComponent(fileName).replace(/%26/g, "&")}`;
 		}
 
 		function renderList() {
@@ -289,10 +303,30 @@
 			openLink.style.pointerEvents = fileName ? "auto" : "none";
 			openLink.style.opacity = fileName ? "1" : "0.5";
 
+			// Update PDF iframe
+			if (fileName) {
+				placeholder.style.display = "none";
+				let iframe = drawingArea.querySelector("iframe");
+				if (!iframe) {
+					iframe = document.createElement("iframe");
+					iframe.title = "PDF Viewer";
+					drawingArea.appendChild(iframe);
+				}
+				iframe.src = href;
+			} else {
+				placeholder.style.display = "";
+				const iframe = drawingArea.querySelector("iframe");
+				if (iframe) iframe.remove();
+			}
+
 			const buttons = dwgList.querySelectorAll(".dwg-btn");
 			buttons.forEach((btn, index) => {
 				btn.classList.toggle("active", index === currentIndex);
 			});
+
+			// Scroll active item into view
+			const activeBtn = dwgList.querySelector(".dwg-btn.active");
+			if (activeBtn) activeBtn.scrollIntoView({ block: "nearest" });
 
 			countText.textContent = `${drawings.length} drawings | ${currentIndex + 1} selected`;
 		}
