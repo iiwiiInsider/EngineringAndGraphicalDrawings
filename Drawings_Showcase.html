@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>AutoCAD Drawings Showcase</title>
+	<style>
+		:root {
+			--bg: #f4efe5;
+			--ink: #1c1c1c;
+			--panel: #fffdf8;
+			--accent: #c94a29;
+			--accent-dark: #8e2f18;
+			--line: #dccdb7;
+			--muted: #5f5a51;
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+			background:
+				radial-gradient(circle at 10% 10%, #fff8ea 0%, transparent 40%),
+				radial-gradient(circle at 90% 0%, #f9e4c7 0%, transparent 35%),
+				var(--bg);
+			color: var(--ink);
+			min-height: 100vh;
+			line-height: 1.5;
+			padding: 24px;
+		}
+
+		.wrap {
+			max-width: 1100px;
+			margin: 0 auto;
+		}
+
+		h1 {
+			font-size: clamp(1.7rem, 4vw, 2.7rem);
+			font-weight: 800;
+			letter-spacing: 0.02em;
+			margin-bottom: 10px;
+		}
+
+		.subtitle {
+			color: var(--muted);
+			margin-bottom: 22px;
+		}
+
+		.layout {
+			display: grid;
+			grid-template-columns: 1.2fr 1fr;
+			gap: 18px;
+		}
+
+		.panel {
+			background: var(--panel);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			box-shadow: 0 10px 26px rgba(70, 49, 15, 0.08);
+			overflow: hidden;
+		}
+
+		.viewer {
+			padding: 20px;
+		}
+
+		.file-label {
+			color: var(--accent-dark);
+			font-weight: 700;
+			margin-bottom: 8px;
+			min-height: 24px;
+			word-break: break-word;
+		}
+
+		.drawing-area {
+			border: 2px dashed var(--line);
+			background: #fffaf2;
+			border-radius: 10px;
+			min-height: 260px;
+			display: grid;
+			place-items: center;
+			text-align: center;
+			padding: 20px;
+			margin-bottom: 14px;
+		}
+
+		.drawing-area p {
+			color: var(--muted);
+			max-width: 48ch;
+		}
+
+		.actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		button,
+		.open-link {
+			border: none;
+			border-radius: 10px;
+			padding: 10px 14px;
+			font-size: 0.95rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.2s ease, opacity 0.2s ease;
+		}
+
+		button:hover,
+		.open-link:hover {
+			transform: translateY(-1px);
+			opacity: 0.92;
+		}
+
+		.primary {
+			background: var(--accent);
+			color: #fff;
+		}
+
+		.secondary {
+			background: #efe4d1;
+			color: #3a2e1d;
+		}
+
+		.open-link {
+			text-decoration: none;
+			background: #213547;
+			color: #fff;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.list {
+			max-height: 520px;
+			overflow: auto;
+			border-left: 1px solid var(--line);
+		}
+
+		.list h2 {
+			position: sticky;
+			top: 0;
+			background: #f7ecda;
+			border-bottom: 1px solid var(--line);
+			padding: 14px 16px;
+			font-size: 1rem;
+		}
+
+		.dwg-btn {
+			display: flex;
+			width: 100%;
+			background: transparent;
+			border: none;
+			border-bottom: 1px solid #efe3cf;
+			text-align: left;
+			padding: 12px 16px;
+			color: #2f2f2f;
+			font-weight: 500;
+			border-radius: 0;
+		}
+
+		.dwg-btn:hover {
+			background: #fff3dd;
+		}
+
+		.dwg-btn.active {
+			background: #ffe3c6;
+			color: #5a220f;
+			font-weight: 700;
+		}
+
+		.count {
+			margin-top: 10px;
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		@media (max-width: 860px) {
+			body {
+				padding: 16px;
+			}
+
+			.layout {
+				grid-template-columns: 1fr;
+			}
+
+			.list {
+				border-left: none;
+				border-top: 1px solid var(--line);
+				max-height: 300px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="wrap">
+		<h1>Drawings done in AutoCAD to become a advanced AutoCAD user.</h1>
+		<p class="subtitle">Browse every DWG file in this project. Select from the list or use Previous/Next.</p>
+
+		<section class="layout panel">
+			<div class="viewer">
+				<p class="file-label" id="currentFile">Select a drawing</p>
+
+				<div class="drawing-area">
+					<p>
+						Most browsers cannot directly render .dwg files. Use Open DWG to view in your CAD software,
+						or download it to inspect locally.
+					</p>
+				</div>
+
+				<div class="actions">
+					<button class="secondary" id="prevBtn" type="button">Previous</button>
+					<button class="secondary" id="nextBtn" type="button">Next</button>
+					<a class="open-link" id="openLink" href="#" target="_blank" rel="noopener">Open DWG</a>
+				</div>
+
+				<p class="count" id="countText">0 drawings</p>
+			</div>
+
+			<div class="list">
+				<h2>DWG Files</h2>
+				<div id="dwgList"></div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const drawings = [
+			"Practical01.dwg",
+			"Practical02.dwg",
+			"Practical03.dwg",
+			"Practical04.dwg",
+			"Practical05.dwg",
+			"Practical06.dwg",
+			"Practical07.dwg",
+			"Practical08.dwg",
+			"Practical09.dwg",
+			"Practical10.dwg",
+			"Practical11.dwg",
+			"Practical12&13.dwg",
+			"Practice_Exercise01.dwg",
+			"Practice_Exercise02.dwg",
+			"Practice_Exercise03.dwg",
+			"Practice_Exercise04.dwg",
+			"Practice_Exercise05.dwg",
+			"Practice_Exercise06.dwg",
+			"Practice_Exercise07.dwg"
+		];
+
+		const currentFile = document.getElementById("currentFile");
+		const dwgList = document.getElementById("dwgList");
+		const openLink = document.getElementById("openLink");
+		const prevBtn = document.getElementById("prevBtn");
+		const nextBtn = document.getElementById("nextBtn");
+		const countText = document.getElementById("countText");
+
+		let currentIndex = drawings.length > 0 ? 0 : -1;
+
+		function linkFor(fileName) {
+			return `Drawings/${encodeURIComponent(fileName).replace(/%2F/g, "/")}`;
+		}
+
+		function renderList() {
+			dwgList.innerHTML = "";
+
+			drawings.forEach((fileName, index) => {
+				const btn = document.createElement("button");
+				btn.className = "dwg-btn";
+				btn.type = "button";
+				btn.textContent = fileName;
+				btn.addEventListener("click", () => {
+					currentIndex = index;
+					renderViewer();
+				});
+				dwgList.appendChild(btn);
+			});
+		}
+
+		function renderViewer() {
+			const fileName = drawings[currentIndex];
+			const href = fileName ? linkFor(fileName) : "#";
+
+			currentFile.textContent = fileName || "No drawing found";
+			openLink.href = href;
+			openLink.style.pointerEvents = fileName ? "auto" : "none";
+			openLink.style.opacity = fileName ? "1" : "0.5";
+
+			const buttons = dwgList.querySelectorAll(".dwg-btn");
+			buttons.forEach((btn, index) => {
+				btn.classList.toggle("active", index === currentIndex);
+			});
+
+			countText.textContent = `${drawings.length} drawings | ${currentIndex + 1} selected`;
+		}
+
+		prevBtn.addEventListener("click", () => {
+			if (drawings.length === 0) {
+				return;
+			}
+			currentIndex = (currentIndex - 1 + drawings.length) % drawings.length;
+			renderViewer();
+		});
+
+		nextBtn.addEventListener("click", () => {
+			if (drawings.length === 0) {
+				return;
+			}
+			currentIndex = (currentIndex + 1) % drawings.length;
+			renderViewer();
+		});
+
+		renderList();
+		renderViewer();
+	</script>
+</body>
+</html>
